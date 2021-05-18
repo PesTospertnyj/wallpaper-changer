@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -21,6 +22,7 @@ func main() {
 		night         int    = 22
 		nightImage    string = "Night.jpg"
 	)
+
 	for {
 		currentHour := time.Now().Hour()
 		switch {
@@ -56,12 +58,13 @@ func main() {
 
 func setWallpaper(name string) {
 	path := "/home/artur/Изображения/Dynamic_Wallpapers/ZorinMountain"
-	command := "./change-wallpaper.sh"
-	args := fmt.Sprintf("%s/%s", path, name)
-	cmd := exec.Command(command, args)
-	err := cmd.Run()
+	command := "gsettings"
+	file := fmt.Sprintf("\"file://%s/%s\"", path, name)
+	cmd := exec.Command(command, "set", "org.gnome.desktop.background", "picture-uri", file)
+	cmd.Stderr = os.Stderr
+	out, err := cmd.Output()
 	if err != nil {
-		log.Fatalf("Command finished with error: %v", err)
+		log.Fatalf("Command finished with error: %v, log : %v", err, out)
 	}
 
 	log.Printf("wallpaper changed to %s", name)
@@ -70,8 +73,8 @@ func setWallpaper(name string) {
 func checkCurrentWallpaper(name string) bool {
 	path := "/home/artur/Изображения/Dynamic_Wallpapers/ZorinMountain"
 	possibleOut := fmt.Sprintf("%s/%s", path, name)
-	command := "./check-current-wallpaper.sh"
-	cmd := exec.Command(command)
+	command := "gsettings"
+	cmd := exec.Command(command, "get", "org.gnome.desktop.background", "picture-uri")
 	out, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("get command output finished with error: %v", err)

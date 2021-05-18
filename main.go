@@ -1,12 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"os/exec"
-	"strings"
 	"time"
+
+	"wallpaper-changer/cmd"
 )
 
 func main() {
@@ -27,58 +24,31 @@ func main() {
 		currentHour := time.Now().Hour()
 		switch {
 		case currentHour > sunrise && currentHour < day:
-			if !checkCurrentWallpaper(sunriseImage) {
-				setWallpaper(sunriseImage)
+			if !cmd.CheckCurrentWallpaper(sunriseImage) {
+				cmd.SetWallpaper(sunriseImage)
 			}
 
 		case currentHour > day && currentHour < evening:
-			if !checkCurrentWallpaper(dayImage) {
-				setWallpaper(dayImage)
+			if !cmd.CheckCurrentWallpaper(dayImage) {
+				cmd.SetWallpaper(dayImage)
 			}
 
 		case currentHour > evening && currentHour < twilight:
-			if !checkCurrentWallpaper(eveningImage) {
-				setWallpaper(eveningImage)
+			if !cmd.CheckCurrentWallpaper(eveningImage) {
+				cmd.SetWallpaper(eveningImage)
 			}
 
 		case currentHour > twilight && currentHour < night:
-			if !checkCurrentWallpaper(twilightImage) {
-				setWallpaper(twilightImage)
+			if !cmd.CheckCurrentWallpaper(twilightImage) {
+				cmd.SetWallpaper(twilightImage)
 			}
 
 		case currentHour > night && currentHour < sunrise:
-			if !checkCurrentWallpaper(nightImage) {
-				setWallpaper(nightImage)
+			if !cmd.CheckCurrentWallpaper(nightImage) {
+				cmd.SetWallpaper(nightImage)
 			}
 		}
 
 		time.Sleep(20 * time.Minute)
 	}
-}
-
-func setWallpaper(name string) {
-	path := "/home/artur/Изображения/Dynamic_Wallpapers/ZorinMountain"
-	command := "gsettings"
-	file := fmt.Sprintf("\"file://%s/%s\"", path, name)
-	cmd := exec.Command(command, "set", "org.gnome.desktop.background", "picture-uri", file)
-	cmd.Stderr = os.Stderr
-	out, err := cmd.Output()
-	if err != nil {
-		log.Fatalf("Command finished with error: %v, log : %v", err, out)
-	}
-
-	log.Printf("wallpaper changed to %s", name)
-}
-
-func checkCurrentWallpaper(name string) bool {
-	path := "/home/artur/Изображения/Dynamic_Wallpapers/ZorinMountain"
-	possibleOut := fmt.Sprintf("%s/%s", path, name)
-	command := "gsettings"
-	cmd := exec.Command(command, "get", "org.gnome.desktop.background", "picture-uri")
-	out, err := cmd.Output()
-	if err != nil {
-		log.Fatalf("get command output finished with error: %v", err)
-	}
-
-	return strings.Contains(string(out), possibleOut)
 }

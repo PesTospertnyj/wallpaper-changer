@@ -1,0 +1,16 @@
+[Unit]
+Description=wallpaper changer
+After=network.target
+StartLimitIntervalSec=1
+
+[Service]
+Type=simple
+User=root
+Restart=always
+RestartSec=1
+TimeoutStopSec=15
+WorkingDirectory=/home/artur/.wallpaper-changer
+ExecStart=/home/artur/.wallpaper-changer/changer
+
+[Install]
+WantedBy=multi-user.target

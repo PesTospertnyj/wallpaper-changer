@@ -1,12 +1,16 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	"wallpaper-changer/cmd"
 )
 
 func main() {
+	/* TODO: придумать как реализовать для остальных сред рабочего стола
+	+ добавить рассчеты по алгоритмам https://edwilliams.org/sunrise_sunset_algorithm.htm
+	*/
 	var (
 		sunrise       int    = 4
 		sunriseImage  string = "Sunrise.jpg"
@@ -23,32 +27,48 @@ func main() {
 	for {
 		currentHour := time.Now().Hour()
 		switch {
-		case currentHour > sunrise && currentHour < day:
+		case currentHour >= sunrise && currentHour < day:
 			if !cmd.CheckCurrentWallpaper(sunriseImage) {
 				cmd.SetWallpaper(sunriseImage)
+				break
 			}
 
-		case currentHour > day && currentHour < evening:
+			log.Println("wallpaper not changed")
+
+		case currentHour >= day && currentHour < evening:
 			if !cmd.CheckCurrentWallpaper(dayImage) {
 				cmd.SetWallpaper(dayImage)
+				break
 			}
 
-		case currentHour > evening && currentHour < twilight:
+			log.Println("wallpaper not changed")
+
+		case currentHour >= evening && currentHour < twilight:
 			if !cmd.CheckCurrentWallpaper(eveningImage) {
 				cmd.SetWallpaper(eveningImage)
+				break
 			}
 
-		case currentHour > twilight && currentHour < night:
+			log.Println("wallpaper not changed")
+
+		case currentHour >= twilight && currentHour < night:
 			if !cmd.CheckCurrentWallpaper(twilightImage) {
 				cmd.SetWallpaper(twilightImage)
+				break
 			}
 
-		case currentHour > night && currentHour < sunrise:
+			log.Println("wallpaper not changed")
+
+		case currentHour >= night:
 			if !cmd.CheckCurrentWallpaper(nightImage) {
 				cmd.SetWallpaper(nightImage)
+				break
 			}
+
+			log.Println("wallpaper not changed")
+
 		}
 
-		time.Sleep(20 * time.Minute)
+		time.Sleep(1 * time.Minute)
 	}
 }
